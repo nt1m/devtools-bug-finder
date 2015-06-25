@@ -1,0 +1,1 @@
+Simple web UI helping with finding easy and mentored FirefoxDevTools bugs to work on.

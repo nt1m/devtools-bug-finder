@@ -6,12 +6,17 @@ ul, li {
   list-style-type: none;
 }
 
-html, body {
-  height: 100%;
+body {
   margin: 0;
+  padding-bottom: 3em;
   font-family: 'Fira Sans', sans-serif;
   font-size: 13px;
   background: #F5F8FA;
+}
+
+body.dark {
+  background: #14171A;
+  color: #9DA1A5;
 }
 
 .box {
@@ -20,8 +25,29 @@ html, body {
   background: white;
 }
 
+.dark .box {
+  background: #252C33;
+  border-color: black;
+}
+
+.separated {
+  border-bottom: 1px solid #E1E8ED;
+}
+
+.dark .separated {
+  border-color: black;
+}
+
+.separated:last-child {
+  border-bottom: none;
+}
+
 a {
-  color: #0F77A1;
+  color: #4C9ED9;
+}
+
+.dark a {
+  color: #D96629;
 }
 
 a:hover {
@@ -31,11 +57,9 @@ a:hover {
 /* General page layout */
 
 .header {
-  background: white;
   padding: 1em 3em;
   margin: 0;
   font-size: 1em;
-  border-bottom: 1px solid #E1E8ED;
 }
 
 .sidebar {
@@ -45,7 +69,7 @@ a:hover {
 }
 
 .main {
-  margin: 3em 3em 3em calc(6em + 200px);
+  margin: 3em 3em 0 calc(6em + 200px);
 }
 
 /* Bugs list */
@@ -58,6 +82,12 @@ a:hover {
 
 .header {
   position: relative;
+  border-radius: 0;
+  border-width: 0 0 1px 0;
+}
+
+.header span {
+  cursor: pointer;
 }
 
 .loading .header::before {
@@ -69,6 +99,10 @@ a:hover {
   left: calc(50% - 16px);
   width: 32px;
   background: url(loader.gif) no-repeat center;
+}
+
+.loading.dark .header::before {
+  background-image: url(loader-dark.gif);
 }
 
 .header .links {
@@ -84,16 +118,8 @@ a:hover {
 
 /* Filters list */
 
-.filters {
-  border-bottom: 1px solid #E1E8ED;
-}
-
-.filters:last-child {
-  border-bottom: none;
-}
-
 .filters li {
-  padding: 1em .5em;
+  padding: .8em;
   box-sizing: border-box;
   flex-basis: 200px;
   display: flex;
@@ -112,12 +138,15 @@ a:hover {
 /* Bug list entry */
 
 .bug {
-  border-bottom: 1px solid #eee;
   padding: .5em;
 }
 
 .bug:hover {
   background: #eee;
+}
+
+.dark .bug:hover {
+  background: #14171A;
 }
 
 .bug .tool-label {

@@ -234,7 +234,7 @@ function createBugMarkup(bug) {
   var el = createNode({
     tagName: "li",
     attributes: {
-      "class": "bug"
+      "class": "bug separated"
     }
   });
 
@@ -244,7 +244,7 @@ function createBugMarkup(bug) {
     attributes: {
       "class": "bug-id",
       href: BUG_URL + bug.id,
-      target: "blank"
+      target: "_blank"
     }
   }));
 

@@ -7,30 +7,31 @@
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<h1 class="header">
-  Firefox Developer Tools
+<h1 class="header box separated">
+  <span onclick="document.body.classList.toggle('dark')">Firefox Developer Tools</span>
   <ul class="links">
-    <li><a href="https://wiki.mozilla.org/DevTools/GetInvolved" target="blank">How to contribute</a></li>
-    <li><a href="http://dxr.mozilla.org/" target="blank">Browse the code</a></li>
-    <li><a href="https://bugzilla.mozilla.org/enter_bug.cgi?product=Firefox&component=Developer%20Tools" target="blank">File a bug</a></li>
+    <li><a href="https://wiki.mozilla.org/DevTools/GetInvolved" target="_blank">How to contribute?</a></li>
+    <li><a href="http://dxr.mozilla.org/" target="_blank">Browse the code</a></li>
+    <li><a href="https://bugzilla.mozilla.org/enter_bug.cgi?product=Firefox&component=Developer%20Tools" target="_blank">File a bug</a></li>
+    <li><a href="https://twitter.com/firefoxdevtools" target="_blank">Twitter</a></li>
   </ul>
 </h1>
 <div class="sidebar box">
-  <ul class="type-list filters">
+  <ul class="type-list filters separated">
     <li>
       <input id="good-first" type="radio" name="type" value="good-first" checked />
       <label for="good-first">Easy bugs only</label>
     </li>
     <li>
       <input id="all-mentored" type="radio" name="type" value="all-mentored" />
-      <label for="all-mentored">All mentored bugs</label>
+      <label for="all-mentored">Mentored bugs</label>
     </li>
     <li>
       <input id="all-bugs" type="radio" name="type" value="all-bugs" />
       <label for="all-bugs">All bugs</label>
     </li>
   </ul>
-  <ul class="tools-list filters">
+  <ul class="tools-list filters separated">
     <li>
       <label for="all">All tools</label>
       <input type="checkbox" id="all" value="all" checked />

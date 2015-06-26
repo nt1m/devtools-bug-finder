@@ -1,4 +1,6 @@
 var BUG_URL = "https://bugzilla.mozilla.org/show_bug.cgi?id=";
+var BUG_STATUS = ["NEW", "REOPENED", "UNCONFIRMED"];
+var WHITEBOARD_TYPE = "contains_all";
 var PRODUCT = "Firefox";
 var COMPONENT_MAPPING = {
   main: {
@@ -104,12 +106,12 @@ function getSearchParams(options) {
     product: PRODUCT,
     component: [],
     // Opened bugs only.
-    bug_status: ["NEW", "REOPENED", "UNCONFIRMED"],
+    bug_status: BUG_STATUS,
     // Include all these fields in the response.
     include_fields: ["id", "assigned_to", "summary", "last_change_time",
                      "component", "whiteboard", "mentors"],
     // ???
-    whiteboard_type: "contains_all",
+    whiteboard_type: WHITEBOARD_TYPE,
     // List of whiteboard flags to search for.
     status_whiteboard: []
   };

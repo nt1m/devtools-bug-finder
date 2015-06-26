@@ -81,7 +81,8 @@ var INCLUDED_FIELDS = ["id",
                        "summary",
                        "last_change_time",
                        "component",
-                       "whiteboard"];
+                       "whiteboard",
+                       "mentors"];
 
 var bugzilla = bz.createClient({url: "https://bugzilla.mozilla.org/bzapi"});
 

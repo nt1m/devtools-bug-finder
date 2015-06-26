@@ -88,21 +88,34 @@ a:hover {
 
 .header span {
   cursor: pointer;
+  margin-left: 40px;
 }
 
-.loading .header::before {
+.header::before {
   content: "";
   display: block;
   position: absolute;
   top: 0;
   height: 100%;
-  left: calc(50% - 16px);
+  left: 3em;
   width: 32px;
-  background: url(loader.gif) no-repeat center;
+  background: url(logo.png) no-repeat center;
 }
 
-.loading.dark .header::before {
-  background-image: url(loader-dark.gif);
+.loading .header::before {
+  animation: rotate .5s linear infinite;
+}
+
+@-webkit-keyframes rotate {
+  to {
+    -webkit-transform: rotate(1turn);
+  }
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(1turn);
+  }
 }
 
 .header .links {

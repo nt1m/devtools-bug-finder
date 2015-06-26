@@ -20,6 +20,14 @@ html, body {
   background: white;
 }
 
+a {
+  color: #0F77A1;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
 /* General page layout */
 
 .header {
@@ -40,7 +48,28 @@ html, body {
   margin: 3em 3em 3em calc(6em + 200px);
 }
 
-/* Links */
+/* Bugs list */
+
+.bugs:empty {
+  display: none;
+}
+
+/* Header */
+
+.header {
+  position: relative;
+}
+
+.loading .header::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  height: 100%;
+  left: calc(50% - 16px);
+  width: 32px;
+  background: url(loader.gif) no-repeat center;
+}
 
 .header .links {
   float: right;

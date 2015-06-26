@@ -220,6 +220,16 @@ function getSelectedType() {
   })[0];
 }
 
+function createEmptyListMarkup() {
+  return createNode({
+    tagName: "li",
+    attributes: {
+      "class": "bug"
+    },
+    textContent: "No bugs found"
+  });
+}
+
 function createBugMarkup(bug) {
   var el = createNode({
     tagName: "li",
@@ -256,14 +266,16 @@ function createBugMarkup(bug) {
 }
 
 function displayBugs(bugs) {
-  bugs = bugs || [];
-
   var el = document.querySelector(".bugs");
   el.innerHTML = "";
 
+  if (!bugs || !bugs.length) {
+    el.appendChild(createEmptyListMarkup());
+    return;
+  }
+
   for (var i = 0; i < bugs.length; i++) {
-    var bugEl = createBugMarkup(bugs[i]);
-    el.appendChild(bugEl);
+    el.appendChild(createBugMarkup(bugs[i]));
   }
 }
 
@@ -295,12 +307,14 @@ function search() {
   var type = getSelectedType();
 
   var index = ++requestIndex;
+  document.body.classList.add("loading");
   getBugs({type: type, components: componentKeys}, function(list) {
     if (index !== requestIndex) {
       // A new request was started in the meantime, drop this one.
       return;
     }
 
+    document.body.classList.remove("loading");
     displayBugs(list);
   });
 }

@@ -1,72 +1,74 @@
+"use strict";
+
 var BUG_URL = "https://bugzilla.mozilla.org/show_bug.cgi?id=";
 var BUG_STATUS = ["NEW", "REOPENED", "UNCONFIRMED"];
 var WHITEBOARD_TYPE = "contains_all";
 var PRODUCT = "Firefox";
 var COMPONENT_MAPPING = {
-  main: {
+  "main": {
     label: "Framework, toolbox UI and widgets",
     components: ["Developer Tools", "Developer Tools: Framework",
                  "Developer Tools: Object Inspector",
                  "Developer Tools: Source Editor"]
   },
-  tilt: {
+  "tilt": {
     label: "3D View",
     components: ["Developer Tools: 3D View"]
   },
-  canvas: {
+  "canvas": {
     label: "Canvas Debugger",
     components: ["Developer Tools: Canvas Debugger"]
   },
-  console: {
+  "console": {
     label: "Web Console",
     components: ["Developer Tools: Console"]
   },
-  debugger: {
+  "debugger": {
     label: "JS Debugger",
     components: ["Developer Tools: Debugger"]
   },
-  gcli: {
+  "gcli": {
     label: "Command Line",
     components: ["Developer Tools: Graphic Commandline and Toolbar"]
   },
-  inspector: {
+  "inspector": {
     label: "Inspector",
     components: ["Developer Tools: Inspector"]
   },
-  perf: {
+  "perf": {
     label: "Performance & Memory Tools",
     components: ["Developer Tools: Memory",
                  "Developer Tools: Performance Tools (Profiler/Timeline)"]
   },
-  network: {
+  "network": {
     label: "Network Monitor",
     components: ["Developer Tools: Netmonitor"]
   },
-  responsive: {
+  "responsive": {
     label: "Responsive Mode",
     components: ["Developer Tools: Responsive Mode"]
   },
-  scratchpad: {
+  "scratchpad": {
     label: "Scratchpad",
     components: ["Developer Tools: Scratchpad"]
   },
-  storage: {
+  "storage": {
     label: "Storage Inspector",
     components: ["Developer Tools: Storage Inspector"]
   },
-  style: {
+  "style": {
     label: "Style Editor",
     components: ["Developer Tools: Style Editor"]
   },
-  audio: {
+  "audio": {
     label: "Web Audio Editor",
     components: ["Developer Tools: Web Audio Editor"]
   },
-  shader: {
+  "shader": {
     label: "WebGL Shader Editor",
     components: ["Developer Tools: WebGL Shader Editor"]
   },
-  webide: {
+  "webide": {
     label: "WebIDE",
     components: ["Developer Tools: WebIDE"]
   }
@@ -81,7 +83,23 @@ var INCLUDED_FIELDS = ["id",
                        "component",
                        "whiteboard"];
 
-var bugzilla = bz.createClient({url: 'https://bugzilla.mozilla.org/bzapi'});
+var bugzilla = bz.createClient({url: "https://bugzilla.mozilla.org/bzapi"});
+
+function createNode(options) {
+  var el = document.createElement(options.tagName || "div");
+
+  if (options.attributes) {
+    for (var i in options.attributes) {
+      el.setAttribute(i, options.attributes[i]);
+    }
+  }
+
+  if (options.textContent) {
+    el.textContent = options.textContent;
+  }
+
+  return el;
+}
 
 function getComponentParams(componentKeys) {
   if (!componentKeys) {
@@ -89,7 +107,7 @@ function getComponentParams(componentKeys) {
   }
 
   var components = [];
-  for (var i = 0; i < componentKeys.length; i ++) {
+  for (var i = 0; i < componentKeys.length; i++) {
     var component = COMPONENT_MAPPING[componentKeys[i]];
     if (component) {
       components = components.concat(component.components);
@@ -103,17 +121,15 @@ function getSearchParams(options) {
 
   var params = {
     // Search only devtools bugs.
-    product: PRODUCT,
-    component: [],
+    "product": PRODUCT,
+    "component": [],
     // Opened bugs only.
-    bug_status: BUG_STATUS,
+    "bug_status": BUG_STATUS,
     // Include all these fields in the response.
-    include_fields: ["id", "assigned_to", "summary", "last_change_time",
-                     "component", "whiteboard", "mentors"],
-    // ???
-    whiteboard_type: WHITEBOARD_TYPE,
+    "include_fields": INCLUDED_FIELDS,
+    "whiteboard_type": WHITEBOARD_TYPE,
     // List of whiteboard flags to search for.
-    status_whiteboard: []
+    "status_whiteboard": []
   };
 
   params.component = getComponentParams(options.components);
@@ -135,7 +151,7 @@ function getSearchParams(options) {
 function timeFromModified(lastChangeTime) {
   var lastModified = new Date(lastChangeTime);
   var today = new Date();
-  var oneDay = 1000*60*60*24;
+  var oneDay = 1000 * 60 * 60 * 24;
   return Math.ceil(
     (today.getTime() - lastModified.getTime()) / oneDay
   );
@@ -173,7 +189,7 @@ function toggleFirstComment(bugEl) {
   bugEl.classList.toggle("expanded");
   var commentEl = bugEl.querySelector(".comment");
 
-  if (commentEl.textContent == "") {
+  if (commentEl.textContent === "") {
     document.body.classList.add("loading");
     var id = bugEl.dataset.id;
     getFirstComment(id, function(comment) {
@@ -312,23 +328,6 @@ function displayBugs(bugs) {
   }
 }
 
-function onInput(e) {
-  // Unselect all other inputs if the "all" input is checked.
-  if (e.target.id === "all" && e.target.checked) {
-    [].forEach.call(document.querySelectorAll(".tools-list input"), function(box) {
-      if (box.id !== "all") {
-        box.checked = false;
-      }
-    });
-  }
-
-  if (e.target.id !== "all" && e.target.type === "checkbox") {
-    document.querySelector("#all").checked = false;
-  }
-
-  search();
-}
-
 var requestIndex = 0;
 function search() {
   var componentKeys = getSelectedTools();
@@ -352,6 +351,23 @@ function search() {
   });
 }
 
+function onInput(e) {
+  // Unselect all other inputs if the "all" input is checked.
+  if (e.target.id === "all" && e.target.checked) {
+    [].forEach.call(document.querySelectorAll(".tools-list input"), function(box) {
+      if (box.id !== "all") {
+        box.checked = false;
+      }
+    });
+  }
+
+  if (e.target.id !== "all" && e.target.type === "checkbox") {
+    document.querySelector("#all").checked = false;
+  }
+
+  search();
+}
+
 function getToolLabel(component) {
   for (var i in COMPONENT_MAPPING) {
     var components = COMPONENT_MAPPING[i].components;
@@ -364,18 +380,18 @@ function getToolLabel(component) {
   return null;
 }
 
-function createNode(options) {
-  var el = document.createElement(options.tagName || "div");
+function init() {
+  // Start by generating the list of filters for tools.
+  createToolListMarkup(document.querySelector(".tools-list"));
 
-  if (options.attributes) {
-    for (var i in options.attributes) {
-      el.setAttribute(i, options.attributes[i]);
+  // Launch a first search.
+  search();
+
+  // And listen for clicks on the bugs list to toggle their first comments.
+  document.querySelector(".bugs").addEventListener("click", function(e) {
+    var bugEl = e.target.closest(".bug");
+    if (bugEl) {
+      toggleFirstComment(bugEl);
     }
-  }
-
-  if (options.textContent) {
-    el.textContent = options.textContent;
-  }
-
-  return el;
+  });
 }

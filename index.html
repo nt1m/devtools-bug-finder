@@ -44,19 +44,8 @@
 <script type="text/javascript" src="bz-0.2.3.js"></script>
 <script type="text/javascript" src="app.js"></script>
 <script>
-addEventListener("load", function() {
-  createToolListMarkup(document.querySelector(".tools-list"));
-  search();
-
-  // Listen for clicks on the bugs list to toggle the
-  // first comment.
-  document.querySelector(".bugs").addEventListener("click", function(e) {
-    var bugEl = e.target.closest(".bug");
-    if (bugEl) {
-      toggleFirstComment(bugEl);
-    }
-  });
-});
+"use strict";
+addEventListener("load", init);
 </script>
 </body>
 </html>

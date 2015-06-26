@@ -1,0 +1,14 @@
+{
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    // Deprecated, will be removed in 1.0.
+    "global-strict": 0,
+    // Require "use strict" to be defined globally in the script.
+    "strict": [2, "global"]
+  },
+  "globals": {
+    "bz": true
+  }
+}

@@ -161,6 +161,26 @@ function getBugs(options, cb) {
   });
 }
 
+function getFirstComment(bugId, cb) {
+  bugzilla.bugComments(bugId, function(_, comments) {
+    cb(comments[0].text);
+  });
+}
+
+function toggleFirstComment(bugEl) {
+  bugEl.classList.toggle("expanded");
+  var commentEl = bugEl.querySelector(".comment");
+
+  if (commentEl.textContent == "") {
+    document.body.classList.add("loading");
+    var id = bugEl.dataset.id;
+    getFirstComment(id, function(comment) {
+      document.body.classList.remove("loading");
+      commentEl.textContent = comment;
+    });
+  }
+}
+
 function createToolListMarkup(parentEl) {
   var keys = Object.keys(COMPONENT_MAPPING).sort(function(a, b) {
     a = COMPONENT_MAPPING[a].label;
@@ -197,6 +217,11 @@ function createToolListMarkup(parentEl) {
 
     parentEl.appendChild(el);
   }
+
+  // Listen for change events on all inputs.
+  [].forEach.call(document.querySelectorAll("input"), function(input) {
+    input.addEventListener("change", onInput);
+  });
 }
 
 function getSelectedTools() {
@@ -234,7 +259,8 @@ function createBugMarkup(bug) {
   var el = createNode({
     tagName: "li",
     attributes: {
-      "class": "bug separated"
+      "class": "bug separated",
+      "data-id": bug.id
     }
   });
 
@@ -260,6 +286,11 @@ function createBugMarkup(bug) {
     textContent: bug.mentors ? "Mentored by " + bug.mentors_detail.map(function(m) {
                    return m.real_name;
                  })[0] : ""
+  }));
+
+  el.appendChild(createNode({
+    tagName: "pre",
+    attributes: {"class": "comment"}
   }));
 
   return el;

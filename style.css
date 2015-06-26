@@ -8,7 +8,6 @@ ul, li {
 
 body {
   margin: 0;
-  padding-bottom: 3em;
   font-family: 'Fira Sans', sans-serif;
   font-size: 13px;
   background: #F5F8FA;
@@ -70,6 +69,15 @@ a:hover {
 
 .main {
   margin: 3em 3em 0 calc(6em + 200px);
+}
+
+.footer {
+  clear: both;
+  border-width: 1px 0 0 0;
+  border-radius: 0px;
+  padding: 1em 3em;
+  margin-top: 3em;
+  text-align: center;
 }
 
 /* Bugs list */

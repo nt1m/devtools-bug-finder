@@ -165,8 +165,19 @@ function isAssigned(bug) {
   return !bug.assigned_to.name.match(/nobody/);
 }
 
+var pastQueries = {};
 function getBugs(options, cb) {
-  bugzilla.searchBugs(getSearchParams(options), function(_, list) {
+  options = getSearchParams(options);
+
+  // Search in past queries first.
+  var queryKey = JSON.stringify(options);
+  if (pastQueries[queryKey]) {
+    cb(pastQueries[queryKey]);
+    return;
+  }
+
+  // Otherwise, actually do the request and store the result.
+  bugzilla.searchBugs(options, function(_, list) {
     if (!list) {
       return;
     }
@@ -175,6 +186,8 @@ function getBugs(options, cb) {
     list = list.filter(function(bug) {
       return !isAssigned(bug) || isInactive(bug);
     });
+
+    pastQueries[queryKey] = list;
     cb(list);
   });
 }

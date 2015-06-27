@@ -366,11 +366,6 @@ function search() {
 }
 
 function onInput(e) {
-  // Track tool.
-  if (e.target.type === "checkbox") {
-    ga("set", "metric1", e.target.id);
-  }
-
   // Unselect all other inputs if the "all" input is checked.
   if (e.target.id === "all" && e.target.checked) {
     [].forEach.call(document.querySelectorAll(".tools-list input"), function(box) {

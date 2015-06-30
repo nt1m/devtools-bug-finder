@@ -61,8 +61,8 @@ a:hover {
 
 [class*="tool-"]::before {
   content: " ";
-  width: 0.8em;
-  height: 0.8em;
+  width: .8em;
+  height: .8em;
   margin-right: .5em;
   border-radius: 50%;
   display: inline-block;
@@ -191,7 +191,7 @@ a:hover {
 
 .bug {
   padding: .5em;
-  cursor: pointer;
+  position: relative;
 }
 
 .bug:hover {
@@ -202,17 +202,47 @@ a:hover {
   background: #14171A;
 }
 
+.bug .old-bug {
+  position: absolute;
+  top: .5em;
+  right: .5em;
+  width: .8em;
+  height: .8em;
+  border-radius: 50%;
+  background: url(old.svg);
+}
+
 .bug .bug-link {
   display: block;
   margin-bottom: .5em;
+  /* Leave some place for the old-bug indicator */
+  margin-right: .8em;
 }
 
 .bug .tool {
   font-weight: bold;
+  margin-bottom: .5em;
 }
 
 .bug .mentor {
   color: #ccc;
+}
+
+.bug .toggle-comment {
+  position: absolute;
+  bottom: .5em;
+  right: .5em;
+  width: .8em;
+  height: .8em;
+  border-radius: 50%;
+  background: url(expand.svg);
+  transition: all .5s;
+  cursor: pointer;
+}
+
+.bug.expanded .toggle-comment {
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .bug .comment {

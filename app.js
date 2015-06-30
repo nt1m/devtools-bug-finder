@@ -205,6 +205,7 @@ function toggleFirstComment(bugEl) {
 
   if (commentEl.textContent === "") {
     document.body.classList.add("loading");
+    commentEl.textContent = "Loading ...";
     var id = bugEl.dataset.id;
     getFirstComment(id, function(comment) {
       document.body.classList.remove("loading");
@@ -288,6 +289,16 @@ function createBugMarkup(bug) {
     }
   });
 
+  if (isInactive(bug)) {
+    el.appendChild(createNode({
+      attributes: {
+        "class": "old-bug",
+        "title": "This bug has been inactive for more than " +
+                 INACTIVE_AFTER + " days"
+      }
+    }));
+  }
+
   el.appendChild(createNode({
     tagName: "a",
     textContent: "Bug " + bug.id + " - " + bug.summary,
@@ -299,7 +310,6 @@ function createBugMarkup(bug) {
   }));
 
   el.appendChild(createNode({
-    tagName: "span",
     attributes: {
       "class": "tool tool-" + getToolID(bug.component)
     },
@@ -311,6 +321,13 @@ function createBugMarkup(bug) {
     textContent: bug.mentors ? "Mentored by " + bug.mentors_detail.map(function(m) {
                    return m.real_name;
                  })[0] : ""
+  }));
+
+  el.appendChild(createNode({
+    attributes: {
+      "class": "toggle-comment",
+      "title": "Toggle the first comment for this bug"
+    }
   }));
 
   el.appendChild(createNode({
@@ -422,6 +439,10 @@ function init() {
 
   // And listen for clicks on the bugs list to toggle their first comments.
   document.querySelector(".bugs").addEventListener("click", function(e) {
+    if (!e.target.classList.contains("toggle-comment")) {
+      return;
+    }
+
     var bugEl = closest(e.target, ".bug");
     if (bugEl) {
       toggleFirstComment(bugEl);

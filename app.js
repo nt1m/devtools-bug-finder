@@ -363,6 +363,10 @@ function displayBugs(bugs) {
     }
     el.appendChild(createBugMarkup(bugs[i]));
   }
+
+  if (el.children.length === 0) {
+    el.appendChild(createEmptyListMarkup());
+  }
 }
 
 var requestIndex = 0;

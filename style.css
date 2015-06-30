@@ -234,7 +234,7 @@ a:hover {
 
 .bug .toggle-comment {
   position: absolute;
-  bottom: .5em;
+  top: 4em;
   right: .5em;
   width: .8em;
   height: .8em;

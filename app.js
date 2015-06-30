@@ -230,7 +230,10 @@ function createToolListMarkup(parentEl) {
     var label = createNode({
       tagName: "label",
       textContent: COMPONENT_MAPPING[keys[i]].label,
-      attributes: {"for": keys[i]}
+      attributes: {
+        "for": keys[i],
+        "class": "tool-" + keys[i]
+      }
     });
 
     el.appendChild(input);
@@ -289,15 +292,16 @@ function createBugMarkup(bug) {
     tagName: "a",
     textContent: "Bug " + bug.id + " - " + bug.summary,
     attributes: {
-      "class": "bug-id",
+      "class": "bug-link",
       href: BUG_URL + bug.id,
       target: "_blank"
     }
   }));
 
   el.appendChild(createNode({
+    tagName: "span",
     attributes: {
-      "class": "tool-label"
+      "class": "tool tool-" + getToolID(bug.component)
     },
     textContent: getToolLabel(bug.component)
   }));
@@ -377,6 +381,18 @@ function getToolLabel(component) {
     for (var j = 0; j < components.length; j++) {
       if (components[j] === component) {
         return COMPONENT_MAPPING[i].label;
+      }
+    }
+  }
+  return null;
+}
+
+function getToolID(component) {
+  for (var i in COMPONENT_MAPPING) {
+    var components = COMPONENT_MAPPING[i].components;
+    for (var j = 0; j < components.length; j++) {
+      if (components[j] === component) {
+        return i;
       }
     }
   }

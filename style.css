@@ -1,8 +1,7 @@
 /* Resets and global styles */
 
 html, body {
-  height: 100%;
-  margin: 0;
+  background: white;
 }
 
 ul, li {
@@ -12,6 +11,7 @@ ul, li {
 }
 
 body {
+  margin: 0;
   font-family: sans-serif;
   font-size: 13px;
   background: #F5F8FA;
@@ -56,6 +56,35 @@ a {
 a:hover {
   text-decoration: none;
 }
+
+/* Tool colors */
+
+[class*="tool-"]::before {
+  content: " ";
+  width: 0.8em;
+  height: 0.8em;
+  margin-right: .5em;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.tool-inspector::before {background: #C717FF;}
+.tool-console::before {background: #0070E8;}
+.tool-debugger::before {background: #07FF44;}
+.tool-network::before {background: #E8D300;}
+.tool-style::before {background: #FF6607;}
+.tool-perf::before {background: #846CFF;}
+.tool-storage::before {background: #4DE8DE;}
+.tool-canvas::before {background: #A7FF5C;}
+.tool-gcli::before {background: #E8B84D;}
+.tool-responsive::before {background: #FF665C;}
+.tool-scratchpad::before {background: #BAD7FF;}
+.tool-audio::before {background: #95E8AE;}
+.tool-shader::before {background: #FFF9AA;}
+.tool-webide::before {background: #E8B795;}
+.tool-tilt::before {background: #FFAAF6;}
+.tool-main::before {background: #2F2DE8;}
+
 
 /* General page layout */
 
@@ -173,7 +202,12 @@ a:hover {
   background: #14171A;
 }
 
-.bug .tool-label {
+.bug .bug-link {
+  display: block;
+  margin-bottom: .5em;
+}
+
+.bug .tool {
   font-weight: bold;
 }
 

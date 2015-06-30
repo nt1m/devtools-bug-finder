@@ -5,19 +5,9 @@ var BUG_STATUS = ["NEW", "REOPENED", "UNCONFIRMED"];
 var WHITEBOARD_TYPE = "contains_all";
 var PRODUCT = "Firefox";
 var COMPONENT_MAPPING = {
-  "main": {
-    label: "Framework, toolbox UI and widgets",
-    components: ["Developer Tools", "Developer Tools: Framework",
-                 "Developer Tools: Object Inspector",
-                 "Developer Tools: Source Editor"]
-  },
-  "tilt": {
-    label: "3D View",
-    components: ["Developer Tools: 3D View"]
-  },
-  "canvas": {
-    label: "Canvas Debugger",
-    components: ["Developer Tools: Canvas Debugger"]
+  "inspector": {
+    label: "Inspector",
+    components: ["Developer Tools: Inspector"]
   },
   "console": {
     label: "Web Console",
@@ -27,22 +17,30 @@ var COMPONENT_MAPPING = {
     label: "JS Debugger",
     components: ["Developer Tools: Debugger"]
   },
-  "gcli": {
-    label: "Command Line",
-    components: ["Developer Tools: Graphic Commandline and Toolbar"]
-  },
-  "inspector": {
-    label: "Inspector",
-    components: ["Developer Tools: Inspector"]
-  },
-  "perf": {
-    label: "Performance & Memory Tools",
-    components: ["Developer Tools: Memory",
-                 "Developer Tools: Performance Tools (Profiler/Timeline)"]
-  },
   "network": {
     label: "Network Monitor",
     components: ["Developer Tools: Netmonitor"]
+  },
+  "style": {
+    label: "Style Editor",
+    components: ["Developer Tools: Style Editor"]
+  },
+  "perf": {
+    label: "Performance Tools",
+    components: ["Developer Tools: Memory",
+                 "Developer Tools: Performance Tools (Profiler/Timeline)"]
+  },
+  "storage": {
+    label: "Storage Inspector",
+    components: ["Developer Tools: Storage Inspector"]
+  },
+  "canvas": {
+    label: "Canvas Debugger",
+    components: ["Developer Tools: Canvas Debugger"]
+  },
+  "gcli": {
+    label: "Command Line",
+    components: ["Developer Tools: Graphic Commandline and Toolbar"]
   },
   "responsive": {
     label: "Responsive Mode",
@@ -51,14 +49,6 @@ var COMPONENT_MAPPING = {
   "scratchpad": {
     label: "Scratchpad",
     components: ["Developer Tools: Scratchpad"]
-  },
-  "storage": {
-    label: "Storage Inspector",
-    components: ["Developer Tools: Storage Inspector"]
-  },
-  "style": {
-    label: "Style Editor",
-    components: ["Developer Tools: Style Editor"]
   },
   "audio": {
     label: "Web Audio Editor",
@@ -71,7 +61,17 @@ var COMPONENT_MAPPING = {
   "webide": {
     label: "WebIDE",
     components: ["Developer Tools: WebIDE"]
-  }
+  },
+  "tilt": {
+    label: "3D View",
+    components: ["Developer Tools: 3D View"]
+  },
+  "main": {
+    label: "Everything Else",
+    components: ["Developer Tools", "Developer Tools: Framework",
+                 "Developer Tools: Object Inspector",
+                 "Developer Tools: Source Editor"]
+  },
 };
 // How many days do we wait until considering an assigned bug as
 // unassigned.
@@ -214,18 +214,7 @@ function toggleFirstComment(bugEl) {
 }
 
 function createToolListMarkup(parentEl) {
-  var keys = Object.keys(COMPONENT_MAPPING).sort(function(a, b) {
-    a = COMPONENT_MAPPING[a].label;
-    b = COMPONENT_MAPPING[b].label;
-    if (a > b) {
-      return 1;
-    }
-    if (a < b) {
-      return -1;
-    }
-    return 0;
-  });
-
+  var keys = Object.keys(COMPONENT_MAPPING);
   for (var i = 0; i < keys.length; i++) {
     var el = createNode({tagName: "li"});
 

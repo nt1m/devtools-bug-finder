@@ -17,6 +17,10 @@ body {
   background: #F5F8FA;
 }
 
+input {
+  font-size: 13px;
+}
+
 body.dark {
   background: #14171A;
   color: #9DA1A5;
@@ -257,4 +261,15 @@ a:hover {
 
 .bug.expanded .comment {
   display: block;
+}
+
+/* Search input */
+
+.search-input {
+  margin: .8em;
+  width: calc(100% - 1.6em);
+  box-sizing: border-box;
+  padding: .5em;
+  border: 1px solid #E1E8ED;
+  border-radius: 5px;
 }

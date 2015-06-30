@@ -84,6 +84,8 @@ var INCLUDED_FIELDS = ["id",
                        "whiteboard",
                        "mentors"];
 
+var searchString = null;
+var currentBugList = null;
 var bugzilla = bz.createClient({url: "https://bugzilla.mozilla.org/bzapi"});
 
 function createNode(options) {
@@ -338,6 +340,13 @@ function createBugMarkup(bug) {
   return el;
 }
 
+function matchesSearchString(bug) {
+  var query = searchString.toLowerCase();
+
+  return bug.summary.toLowerCase().indexOf(query) !== -1 ||
+         (bug.id + "").indexOf(query) !== -1;
+}
+
 function displayBugs(bugs) {
   var el = document.querySelector(".bugs");
   el.innerHTML = "";
@@ -348,12 +357,18 @@ function displayBugs(bugs) {
   }
 
   for (var i = 0; i < bugs.length; i++) {
+    // Only show if it matches the current search.
+    if (searchString && !matchesSearchString(bugs[i])) {
+      continue;
+    }
     el.appendChild(createBugMarkup(bugs[i]));
   }
 }
 
 var requestIndex = 0;
 function search() {
+  currentBugList = [];
+
   var componentKeys = getSelectedTools();
   if (!componentKeys.length) {
     displayBugs();
@@ -372,6 +387,7 @@ function search() {
 
     document.body.classList.remove("loading");
     displayBugs(list);
+    currentBugList = list;
   });
 }
 
@@ -447,5 +463,11 @@ function init() {
     if (bugEl) {
       toggleFirstComment(bugEl);
     }
+  });
+
+  // Listen to keypress in the search field to start searching.
+  document.querySelector(".search-input").addEventListener("keyup", function() {
+    searchString = this.value;
+    displayBugs(currentBugList);
   });
 }

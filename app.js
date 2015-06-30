@@ -244,8 +244,8 @@ function createToolListMarkup(parentEl) {
       attributes: {"for": keys[i]}
     });
 
-    el.appendChild(label);
     el.appendChild(input);
+    el.appendChild(label);
 
     parentEl.appendChild(el);
   }
@@ -394,6 +394,20 @@ function getToolLabel(component) {
   return null;
 }
 
+function closest(rootEl, selector) {
+  if (rootEl.closest) {
+    return rootEl.closest(selector);
+  }
+
+  while (rootEl) {
+    if (rootEl.matches(selector)) {
+      return rootEl;
+    }
+    rootEl = rootEl.parentNode;
+  }
+  return null;
+}
+
 function init() {
   // Start by generating the list of filters for tools.
   createToolListMarkup(document.querySelector(".tools-list"));
@@ -403,7 +417,7 @@ function init() {
 
   // And listen for clicks on the bugs list to toggle their first comments.
   document.querySelector(".bugs").addEventListener("click", function(e) {
-    var bugEl = e.target.closest(".bug");
+    var bugEl = closest(e.target, ".bug");
     if (bugEl) {
       toggleFirstComment(bugEl);
     }

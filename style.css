@@ -111,6 +111,7 @@ a:hover {
 }
 
 .loading .header::before {
+  -webkit-animation: rotate .5s linear infinite;
   animation: rotate .5s linear infinite;
 }
 
@@ -142,9 +143,6 @@ a:hover {
 .filters li {
   padding: .8em;
   box-sizing: border-box;
-  flex-basis: 200px;
-  display: flex;
-  align-items: center;
 }
 
 .filters li input {
@@ -153,7 +151,7 @@ a:hover {
 }
 
 .filters li label {
-  order: 1;
+
 }
 
 /* Bug list entry */
@@ -185,6 +183,7 @@ a:hover {
   width: 100%;
   overflow: hidden;
   margin: 1em 0 0 0;
+  white-space: pre-line;
   display: none;
 }
 

@@ -196,6 +196,7 @@ a:hover {
 .bug {
   padding: .5em;
   position: relative;
+  min-height: 4em;
 }
 
 .bug:hover {

@@ -104,6 +104,35 @@ function createNode(options) {
   return el;
 }
 
+function debounce(func, wait) {
+  var timeout, args, context, timestamp, result;
+
+  var later = function() {
+    var last = Date.now() - timestamp;
+
+    if (last < wait && last >= 0) {
+      timeout = setTimeout(later, wait - last);
+    } else {
+      timeout = null;
+      result = func.apply(context, args);
+      if (!timeout) {
+        context = args = null;
+      }
+    }
+  };
+
+  return function() {
+    context = this;
+    args = arguments;
+    timestamp = Date.now();
+    if (!timeout) {
+      timeout = setTimeout(later, wait);
+    }
+
+    return result;
+  };
+}
+
 function getComponentParams(componentKeys) {
   if (!componentKeys) {
     return [];
@@ -470,8 +499,8 @@ function init() {
   });
 
   // Listen to keypress in the search field to start searching.
-  document.querySelector(".search-input").addEventListener("keyup", function() {
+  document.querySelector(".search-input").addEventListener("keyup", debounce(function() {
     searchString = this.value;
     displayBugs(currentBugList);
-  });
+  }, 100));
 }

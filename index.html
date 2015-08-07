@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <title>Find DevTools bugs</title>
-  <link href='http://fonts.googleapis.com/css?family=Fira+Sans' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
@@ -17,6 +16,9 @@
   </ul>
 </h1>
 <div class="sidebar box">
+  <div class="separated">
+    <input class="search-input" type="text" placeholder="Search displayed bugs" />
+  </div>
   <ul class="type-list filters separated">
     <li>
       <input id="good-first" type="radio" name="type" value="good-first" checked />
@@ -37,8 +39,8 @@
   </ul>
   <ul class="tools-list filters separated">
     <li>
-      <label for="all">All tools</label>
       <input type="checkbox" id="all" value="all" checked />
+      <label for="all">All tools</label>
     </li>
   </ul>
 </div>

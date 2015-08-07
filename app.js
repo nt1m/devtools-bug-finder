@@ -5,19 +5,9 @@ var BUG_STATUS = ["NEW", "REOPENED", "UNCONFIRMED"];
 var WHITEBOARD_TYPE = "contains_all";
 var PRODUCT = "Firefox";
 var COMPONENT_MAPPING = {
-  "main": {
-    label: "Framework, toolbox UI and widgets",
-    components: ["Developer Tools", "Developer Tools: Framework",
-                 "Developer Tools: Object Inspector",
-                 "Developer Tools: Source Editor"]
-  },
-  "tilt": {
-    label: "3D View",
-    components: ["Developer Tools: 3D View"]
-  },
-  "canvas": {
-    label: "Canvas Debugger",
-    components: ["Developer Tools: Canvas Debugger"]
+  "inspector": {
+    label: "Inspector",
+    components: ["Developer Tools: Inspector"]
   },
   "console": {
     label: "Web Console",
@@ -27,22 +17,30 @@ var COMPONENT_MAPPING = {
     label: "JS Debugger",
     components: ["Developer Tools: Debugger"]
   },
-  "gcli": {
-    label: "Command Line",
-    components: ["Developer Tools: Graphic Commandline and Toolbar"]
-  },
-  "inspector": {
-    label: "Inspector",
-    components: ["Developer Tools: Inspector"]
-  },
-  "perf": {
-    label: "Performance & Memory Tools",
-    components: ["Developer Tools: Memory",
-                 "Developer Tools: Performance Tools (Profiler/Timeline)"]
-  },
   "network": {
     label: "Network Monitor",
     components: ["Developer Tools: Netmonitor"]
+  },
+  "style": {
+    label: "Style Editor",
+    components: ["Developer Tools: Style Editor"]
+  },
+  "perf": {
+    label: "Performance Tools",
+    components: ["Developer Tools: Memory",
+                 "Developer Tools: Performance Tools (Profiler/Timeline)"]
+  },
+  "storage": {
+    label: "Storage Inspector",
+    components: ["Developer Tools: Storage Inspector"]
+  },
+  "canvas": {
+    label: "Canvas Debugger",
+    components: ["Developer Tools: Canvas Debugger"]
+  },
+  "gcli": {
+    label: "Command Line",
+    components: ["Developer Tools: Graphic Commandline and Toolbar"]
   },
   "responsive": {
     label: "Responsive Mode",
@@ -51,14 +49,6 @@ var COMPONENT_MAPPING = {
   "scratchpad": {
     label: "Scratchpad",
     components: ["Developer Tools: Scratchpad"]
-  },
-  "storage": {
-    label: "Storage Inspector",
-    components: ["Developer Tools: Storage Inspector"]
-  },
-  "style": {
-    label: "Style Editor",
-    components: ["Developer Tools: Style Editor"]
   },
   "audio": {
     label: "Web Audio Editor",
@@ -71,7 +61,17 @@ var COMPONENT_MAPPING = {
   "webide": {
     label: "WebIDE",
     components: ["Developer Tools: WebIDE"]
-  }
+  },
+  "tilt": {
+    label: "3D View",
+    components: ["Developer Tools: 3D View"]
+  },
+  "main": {
+    label: "Everything Else",
+    components: ["Developer Tools", "Developer Tools: Framework",
+                 "Developer Tools: Object Inspector",
+                 "Developer Tools: Source Editor"]
+  },
 };
 // How many days do we wait until considering an assigned bug as
 // unassigned.
@@ -84,6 +84,8 @@ var INCLUDED_FIELDS = ["id",
                        "whiteboard",
                        "mentors"];
 
+var searchString = null;
+var currentBugList = null;
 var bugzilla = bz.createClient({url: "https://bugzilla.mozilla.org/bzapi"});
 
 function createNode(options) {
@@ -100,6 +102,35 @@ function createNode(options) {
   }
 
   return el;
+}
+
+function debounce(func, wait) {
+  var timeout, args, context, timestamp, result;
+
+  var later = function() {
+    var last = Date.now() - timestamp;
+
+    if (last < wait && last >= 0) {
+      timeout = setTimeout(later, wait - last);
+    } else {
+      timeout = null;
+      result = func.apply(context, args);
+      if (!timeout) {
+        context = args = null;
+      }
+    }
+  };
+
+  return function() {
+    context = this;
+    args = arguments;
+    timestamp = Date.now();
+    if (!timeout) {
+      timeout = setTimeout(later, wait);
+    }
+
+    return result;
+  };
 }
 
 function getComponentParams(componentKeys) {
@@ -211,6 +242,7 @@ function toggleFirstComment(bugEl) {
 
   if (commentEl.textContent === "") {
     document.body.classList.add("loading");
+    commentEl.textContent = "Loading ...";
     var id = bugEl.dataset.id;
     getFirstComment(id, function(comment) {
       document.body.classList.remove("loading");
@@ -220,18 +252,7 @@ function toggleFirstComment(bugEl) {
 }
 
 function createToolListMarkup(parentEl) {
-  var keys = Object.keys(COMPONENT_MAPPING).sort(function(a, b) {
-    a = COMPONENT_MAPPING[a].label;
-    b = COMPONENT_MAPPING[b].label;
-    if (a > b) {
-      return 1;
-    }
-    if (a < b) {
-      return -1;
-    }
-    return 0;
-  });
-
+  var keys = Object.keys(COMPONENT_MAPPING);
   for (var i = 0; i < keys.length; i++) {
     var el = createNode({tagName: "li"});
 
@@ -247,11 +268,14 @@ function createToolListMarkup(parentEl) {
     var label = createNode({
       tagName: "label",
       textContent: COMPONENT_MAPPING[keys[i]].label,
-      attributes: {"for": keys[i]}
+      attributes: {
+        "for": keys[i],
+        "class": "tool-" + keys[i]
+      }
     });
 
-    el.appendChild(label);
     el.appendChild(input);
+    el.appendChild(label);
 
     parentEl.appendChild(el);
   }
@@ -302,11 +326,21 @@ function createBugMarkup(bug) {
     }
   });
 
+  if (isInactive(bug)) {
+    el.appendChild(createNode({
+      attributes: {
+        "class": "old-bug",
+        "title": "This bug has been inactive for more than " +
+                 INACTIVE_AFTER + " days"
+      }
+    }));
+  }
+
   el.appendChild(createNode({
     tagName: "a",
     textContent: "Bug " + bug.id + " - " + bug.summary,
     attributes: {
-      "class": "bug-id",
+      "class": "bug-link",
       href: BUG_URL + bug.id,
       target: "_blank"
     }
@@ -314,7 +348,7 @@ function createBugMarkup(bug) {
 
   el.appendChild(createNode({
     attributes: {
-      "class": "tool-label"
+      "class": "tool tool-" + getToolID(bug.component)
     },
     textContent: getToolLabel(bug.component)
   }));
@@ -327,11 +361,25 @@ function createBugMarkup(bug) {
   }));
 
   el.appendChild(createNode({
+    attributes: {
+      "class": "toggle-comment",
+      "title": "Toggle the first comment for this bug"
+    }
+  }));
+
+  el.appendChild(createNode({
     tagName: "pre",
     attributes: {"class": "comment"}
   }));
 
   return el;
+}
+
+function matchesSearchString(bug) {
+  var query = searchString.toLowerCase();
+
+  return bug.summary.toLowerCase().indexOf(query) !== -1 ||
+         (bug.id + "").indexOf(query) !== -1;
 }
 
 function displayBugs(bugs) {
@@ -344,12 +392,22 @@ function displayBugs(bugs) {
   }
 
   for (var i = 0; i < bugs.length; i++) {
+    // Only show if it matches the current search.
+    if (searchString && !matchesSearchString(bugs[i])) {
+      continue;
+    }
     el.appendChild(createBugMarkup(bugs[i]));
+  }
+
+  if (el.children.length === 0) {
+    el.appendChild(createEmptyListMarkup());
   }
 }
 
 var requestIndex = 0;
 function search() {
+  currentBugList = [];
+
   var componentKeys = getSelectedTools();
   if (!componentKeys.length) {
     displayBugs();
@@ -368,15 +426,11 @@ function search() {
 
     document.body.classList.remove("loading");
     displayBugs(list);
+    currentBugList = list;
   });
 }
 
 function onInput(e) {
-  // Track tool.
-  if (e.target.type === "checkbox") {
-    ga("set", "metric1", e.target.id);
-  }
-
   // Unselect all other inputs if the "all" input is checked.
   if (e.target.id === "all" && e.target.checked) {
     [].forEach.call(document.querySelectorAll(".tools-list input"), function(box) {
@@ -405,6 +459,32 @@ function getToolLabel(component) {
   return null;
 }
 
+function getToolID(component) {
+  for (var i in COMPONENT_MAPPING) {
+    var components = COMPONENT_MAPPING[i].components;
+    for (var j = 0; j < components.length; j++) {
+      if (components[j] === component) {
+        return i;
+      }
+    }
+  }
+  return null;
+}
+
+function closest(rootEl, selector) {
+  if (rootEl.closest) {
+    return rootEl.closest(selector);
+  }
+
+  while (rootEl) {
+    if (rootEl.matches(selector)) {
+      return rootEl;
+    }
+    rootEl = rootEl.parentNode;
+  }
+  return null;
+}
+
 function init() {
   // Start by generating the list of filters for tools.
   createToolListMarkup(document.querySelector(".tools-list"));
@@ -414,9 +494,19 @@ function init() {
 
   // And listen for clicks on the bugs list to toggle their first comments.
   document.querySelector(".bugs").addEventListener("click", function(e) {
-    var bugEl = e.target.closest(".bug");
+    if (!e.target.classList.contains("toggle-comment")) {
+      return;
+    }
+
+    var bugEl = closest(e.target, ".bug");
     if (bugEl) {
       toggleFirstComment(bugEl);
     }
   });
+
+  // Listen to keypress in the search field to start searching.
+  document.querySelector(".search-input").addEventListener("keyup", debounce(function() {
+    searchString = this.value;
+    displayBugs(currentBugList);
+  }, 100));
 }

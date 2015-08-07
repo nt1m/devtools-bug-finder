@@ -135,15 +135,21 @@ function getSearchParams(options) {
 
   params.component = getComponentParams(options.components);
 
-  if (options.type === "good-first") {
-    // Only search for good-first-bugs (whether mentored or not).
-    params.status_whiteboard.push("good first bug");
-  } else if (options.type === "all-mentored") {
-    // Search for all mentored bugs.
-    params.f1 = "bug_mentor";
-    params.o1 = "isnotempty";
-  } else if (options.type === "all-bugs") {
-    // Search for all bugs.
+  switch (options.type) {
+    case "good-first":
+      // Only search for good-first-bugs (whether mentored or not).
+      params.status_whiteboard.push("good first bug");
+      break;
+    case "all-mentored":
+      // Search for all mentored bugs.
+      params.f1 = "bug_mentor";
+      params.o1 = "isnotempty";
+      break;
+    case "all-polish":
+      params.status_whiteboard.push("polish-backlog");
+    default:
+      // Search for all bugs.
+      break;
   }
 
   return params;

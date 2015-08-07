@@ -179,6 +179,7 @@ function getSearchParams(options) {
     case "all-polish":
       // Search for polish-backlog bugs
       params.status_whiteboard.push("polish-backlog");
+      break;
     default:
       // Search for all bugs.
       break;
